@@ -7,36 +7,40 @@ class NasmConan(ConanFile):
     version = "2.13.01"
     license = "LGPL"
     url = "https://github.com/lasote/conan-nasm-installer"
-    settings = {"os", "arch"}
+    settings = "os"
     build_policy = "missing"
     description="Nasm for windows. Useful as a build_require."
     
     def configure(self):
         if self.settings.os != "Windows":
             raise Exception("Only windows supported for nasm")
-    
-    @property
-    def nasm_url_id(self):
-        nasm_os_url_id = "" #nasm url identifier
-        if self.settings.arch == "x86":
-            nasm_os_url_id = "win32"
-        else:
-            nasm_os_url_id = "win64" 
-        return nasm_os_url_id
-    
+        
     @property
     def nasm_folder_name(self):
         return "nasm-%s" % self.version
 
-    def source(self):
-        nasm_zip_name = "%s-%s.zip" % (self.nasm_folder_name, self.nasm_url_id)
-        tools.download("http://www.nasm.us/pub/nasm/releasebuilds/%s/%s/%s" % (self.version, self.nasm_url_id, nasm_zip_name), nasm_zip_name)
-        self.output.warn("Downloading nasm: http://www.nasm.us/pub/nasm/releasebuilds/%s/%s/%s" % (self.version, self.nasm_url_id, nasm_zip_name))
-        tools.unzip(nasm_zip_name)
-        os.unlink(nasm_zip_name)
+    def build(self):
+        def get_version(suffix):
+            nasm_zip_name = "%s-%s.zip" % (self.nasm_folder_name, suffix)
+            tools.download("http://www.nasm.us/pub/nasm/releasebuilds/%s/%s/%s" % (self.version, suffix, nasm_zip_name), nasm_zip_name)
+            self.output.warn("Downloading nasm: http://www.nasm.us/pub/nasm/releasebuilds/%s/%s/%s" % (self.version, suffix, nasm_zip_name))
+            tools.unzip(nasm_zip_name)
+            os.unlink(nasm_zip_name)
+        os.mkdir("x86")
+        with tools.chdir("x86"):
+            get_version("win32")
+            
+        os.mkdir("x86_64")
+        with tools.chdir("x86_64"):
+            get_version("win64")
+            
 
     def package(self):
-        self.copy("*", dst="", src=self.nasm_folder_name, keep_path=True)
+        self.copy("*", dst="", keep_path=True)
+        self.copy("license*", dst="", src=os.path.join(tools.detected_architecture(), self.nasm_folder_name), 
+                  keep_path=False, ignore_case=True)
 
     def package_info(self):
-        self.env_info.path.append(self.package_folder)
+        self.output.info("Using %s version" % tools.detected_architecture())
+        self.env_info.path.append(os.path.join(self.package_folder, tools.detected_architecture(), self.nasm_folder_name))
+
