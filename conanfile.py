@@ -4,11 +4,15 @@ import os
 
 class NasmConan(ConanFile):
     name = "nasm"
-    version = "2.12.02"
+    version = "2.13.01"
     license = "LGPL"
     url = "https://github.com/lasote/conan-nasm-installer"
-    settings = {"os": ["Windows", "Macos"], "arch": {"x86", "x86_64"}}
+    settings = {"os", "arch"}
     build_policy = "missing"
+    
+    def configure(self):
+        if self.settings.os != "Windows":
+            raise Exception("Only windows supported for nasm")
     
     @property
     def nasm_url_id(self):
@@ -17,10 +21,6 @@ class NasmConan(ConanFile):
             nasm_os_url_id = "win32"
         else:
             nasm_os_url_id = "win64" 
-        
-        if self.settings.os == "Macos":
-            nasm_os_url_id = "macosx"
-            
         return nasm_os_url_id
     
     @property
@@ -34,12 +34,8 @@ class NasmConan(ConanFile):
         tools.unzip(nasm_zip_name)
         os.unlink(nasm_zip_name)
 
-    def build(self):
-        pass
-
     def package(self):
         self.copy("*", dst="", src=self.nasm_folder_name, keep_path=True)
 
     def package_info(self):
-        nasm_path = os.path.join(self.package_folder)
-        self.env_info.path.append(nasm_path)
+        self.env_info.path.append(self.package_folder)
