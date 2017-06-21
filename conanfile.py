@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake, tools
+from conans import ConanFile, tools
 import os
 
 
@@ -9,6 +9,7 @@ class NasmConan(ConanFile):
     url = "https://github.com/lasote/conan-nasm-installer"
     settings = {"os", "arch"}
     build_policy = "missing"
+    description="Nasm for windows. Useful as a build_require."
     
     def configure(self):
         if self.settings.os != "Windows":
