@@ -5,7 +5,7 @@ import os
 class NasmConan(ConanFile):
     name = "nasm"
     version = "2.13.01"
-    license = "LGPL"
+    license = "BSD-2-Clause"
     url = "https://github.com/lasote/conan-nasm-installer"
     settings = "os"
     build_policy = "missing"
