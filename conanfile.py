@@ -17,7 +17,7 @@ class NasmConan(ConanFile):
         settings = "os_build"
     build_policy = "missing"
     description="Nasm for windows. Useful as a build_require."
-    
+
     def configure(self):
         if self.os != "Windows":
             raise Exception("Only windows supported for nasm")
@@ -43,7 +43,7 @@ class NasmConan(ConanFile):
         os.mkdir("x86")
         with tools.chdir("x86"):
             get_version("win32")
-            
+
         os.mkdir("x86_64")
         with tools.chdir("x86_64"):
             get_version("win64")
@@ -58,3 +58,4 @@ class NasmConan(ConanFile):
         self.output.info("Using %s version" % tools.detected_architecture())
         self.env_info.path.append(os.path.join(self.package_folder, tools.detected_architecture(),
                                                self.nasm_folder_name))
+
