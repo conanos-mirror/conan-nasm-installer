@@ -11,7 +11,7 @@ class NasmConan(ConanFile):
     version = "2.13.01"
     license = "BSD-2-Clause"
     url = "https://github.com/lasote/conan-nasm-installer"
-    if conan_version < Version("1.0.0"):
+    if conan_version < Version("0.99"):
         settings = "os"
     else:
         settings = "os_build"
