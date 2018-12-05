@@ -1,6 +1,6 @@
 import os
 from conans import ConanFile
-from conans.client import tools
+from conans import tools
 from conans import __version__ as conan_version
 from conans.model.version import Version
 
